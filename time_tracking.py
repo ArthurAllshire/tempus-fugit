@@ -10,7 +10,7 @@ class TimeTracker(object):
         self.update()
 
     def update(self):
-        response = urllib.urlopen(url)
+        response = urllib.urlopen(self.server_url)
         self.data = json.loads(response.read())
         self.graph_data.append([int(time.time()), sum(self.data["leaderboard"].values())])
         for point in list(self.graph_data):
