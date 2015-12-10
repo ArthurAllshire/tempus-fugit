@@ -5,6 +5,8 @@ from kivy.uix.textinput import TextInput
 from kivy.garden.graph import Graph, LinePlot
 from kivy.clock import Clock
 
+import time
+
 from time_tracking import TimeTracker
 
 BACKEND_URL = "http://loki.acfr.usyd.edu.au:4774/dropbot/tempus-fugit" # please do not leave the backslack at the end of the url, the code will break if you do that ;)
@@ -16,7 +18,7 @@ class TimeTrackingScreen(GridLayout):
         self.cols = 1
         self.tt = TimeTracker(BACKEND_URL)
         #self.qr = QRScanner()
-        self.graph = TotalTimeGraph()
+        self.graph = TotalTimeGraph(self.tt)
         #self.leaderboard = Leaderboard()
         #self.bottom = BottomTimeTrackingScreen(self.qr, self.leaderboard)
 
@@ -38,7 +40,7 @@ class QRScanner():
         pass # in this function my intention is to scan for qr codes in the image the toggle the status of the person if they havent scanned for a few seconds
 
 class TotalTimeGraph(Graph):
-    def __init__(self, timetracker, *kwargs):
+    def __init__(self, timetracker, **kwargs):
         super(TotalTimeGraph, self).__init__(**kwargs)
         self.tt = timetracker
 
@@ -49,7 +51,7 @@ class TotalTimeGraph(Graph):
         self.y_ticks_major = 1000
         self.x_grid_label = True
         self.y_grid_label = True
-        SELF.PADDING = 5
+        self.PADDING = 5
         self.x_grid = True
         self.y_grid = True
         self.x_min = -15
@@ -61,8 +63,8 @@ class TotalTimeGraph(Graph):
         pass
 
     def update(self, dt):
-        history, gradient = self.tt.get_total_time_and_history
-        self.plot.points([history[:]+[[int(time.time), (int(time.time-history[-1][1])*gradient)]]])
+        history, gradient = self.tt.get_total_time_and_history()
+        self.plot.points([history[:]+[[int(time.time()), (int(time.time()-history[-1][1])*gradient)]]])
         TotalTimeGraph.add_plot(self.plot)
         super(TotalTimeGraph, self)._redraw_all()
 

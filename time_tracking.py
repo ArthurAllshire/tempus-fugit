@@ -8,7 +8,11 @@ class TimeTracker(object):
         self.data = {}
         self.graph_data = []
         #hardcoded the response string to this line as arthur cannot GET the dropbot outside the acfr
-        self.update(response_string='{"clocked_in":["james"],"leaderboard":{"james":906.419,"arthur":381.759},"real_names":{"james":"James Ward","arthur":"Arthur Allshire"}}"}}')
+        self.update(response_string='{ \
+                                       "clocked_in": ["james"], \
+                                       "leaderboard": {"james":906.419,"arthur":381.759}, \
+                                       "real_names": {"james":"James Ward","arthur":"Arthur Allshire"} \
+                                     }')
 
     def update(self, response_string=None):
         if not response_string:
