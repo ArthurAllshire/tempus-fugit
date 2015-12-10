@@ -7,12 +7,14 @@ class TimeTracker(object):
         self.server_url = server_url
         self.data = {}
         self.graph_data = []
-        self.update()
+        #hardcoded the response string to this line as arthur cannot GET the dropbot outside the acfr
+        self.update(response_string='{"clocked_in":["james"],"leaderboard":{"james":906.419,"arthur":381.759},"real_names":{"james":"James Ward","arthur":"Arthur Allshire"}}"}}')
 
-    def update(self, response=None):
-        if not response:
+    def update(self, response_string=None):
+        if not response_string:
             response = urllib.urlopen(self.server_url+"/leaderboard")
-        self.data = json.loads(response.read())
+            response_string = response.read()
+        self.data = json.loads(response_string)
         self.graph_data.append([int(time.time()), sum(self.data["leaderboard"].values())])
         for point in list(self.graph_data):
             if int(time.time()) - point[0] > (GRAPH_MINUTES*60) and int(time.time()) - point[0] > (GRAPH_MINUTES*60):
@@ -20,7 +22,7 @@ class TimeTracker(object):
 
     def toggle_status(self, person):
         response = urllib.urlopen(self.server_url+"/qr/"+person)
-        self.update(response=response)
+        self.update(response=response.read())
 
     def get_leaderboard(self):
         leaderboard = self.data["leaderboard"]
