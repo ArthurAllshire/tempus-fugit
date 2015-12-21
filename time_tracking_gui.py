@@ -27,7 +27,11 @@ class TimeTrackingScreen(GridLayout):
         #self.add_widget(self.bottom)
 
     def update(self, dt):
-        self.tt.update(dt) #this will send a request to the server and see what has changed. also update the variables that the graph etc. uess
+        self.tt.update(response_string='{ \
+                                       "clocked_in": ["james"], \
+                                       "leaderboard": {"james":906.419,"arthur":381.759}, \
+                                       "real_names": {"james":"James Ward","arthur":"Arthur Allshire"} \
+                                     }') #this will send a request to the server and see what has changed. also update the variables that the graph etc. uess
         #self.qr.update(dt)
         self.graph.update(dt)
         #elf.leaderboard.update(dt)
@@ -64,8 +68,10 @@ class TotalTimeGraph(Graph):
 
     def update(self, dt):
         history, gradient = self.tt.get_total_time_and_history()
-        self.plot.points([history[:]+[[int(time.time()), (int(time.time()-history[-1][1])*gradient)]]])
-        TotalTimeGraph.add_plot(self.plot)
+        #self.plot.points = ([history[:]+[[int(time.time()), (int(time.time()-history[-1][1])*gradient)]]])
+        self.plot.points = (history[:]+[[int(time.time()), (int(time.time()-history[-1][1])*gradient)]])
+        print self.plot.points
+        TotalTimeGraph.add_plot(self, self.plot)
         super(TotalTimeGraph, self)._redraw_all()
 
 class Leaderboard():

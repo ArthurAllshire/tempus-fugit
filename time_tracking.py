@@ -26,7 +26,12 @@ class TimeTracker(object):
 
     def toggle_status(self, person):
         response = urllib.urlopen(self.server_url+"/qr/"+person)
-        self.update(response=response.read())
+        #self.update(response=response.read())
+        self.update(response_string='{ \
+                                       "clocked_in": ["james"], \
+                                       "leaderboard": {"james":906.419,"arthur":381.759}, \
+                                       "real_names": {"james":"James Ward","arthur":"Arthur Allshire"} \
+                                     }')
 
     def get_leaderboard(self):
         leaderboard = self.data["leaderboard"]
