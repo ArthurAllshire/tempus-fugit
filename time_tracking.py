@@ -20,9 +20,9 @@ class TimeTracker(object):
             response_string = response.read()
         self.data = json.loads(response_string)
         self.graph_data.append([int(time.time()), sum(self.data["leaderboard"].values())])
-        for point in list(self.graph_data):
-            if int(time.time()) - point[0] > (GRAPH_MINUTES*60) and int(time.time()) - point[0] > (GRAPH_MINUTES*60):
-                self.graph_data.remove(point)
+        #for point in list(self.graph_data):
+        #    if int(time.time()) - point[0] > (GRAPH_MINUTES*60) and int(time.time()) - point[0] > (GRAPH_MINUTES*60):
+        #        self.graph_data.remove(point)
 
     def toggle_status(self, person):
         response = urllib.urlopen(self.server_url+"/qr/"+person)

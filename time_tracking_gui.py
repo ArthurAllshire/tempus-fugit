@@ -5,7 +5,7 @@ from kivy.uix.textinput import TextInput
 from kivy.garden.graph import Graph, LinePlot
 from kivy.clock import Clock
 
-import time
+import time, random
 
 from time_tracking import TimeTracker
 
@@ -24,12 +24,14 @@ class TimeTrackingScreen(GridLayout):
 
         # add all of these widgets to the screen
         self.add_widget(self.graph)
+        self.cumtime=906.419
         #self.add_widget(self.bottom)
 
     def update(self, dt):
+        self.cumtime+=random.randint(0,2)
         self.tt.update(response_string='{ \
                                        "clocked_in": ["james"], \
-                                       "leaderboard": {"james":906.419,"arthur":381.759}, \
+                                       "leaderboard": {"james":'+str(self.cumtime)+',"arthur":381.759}, \
                                        "real_names": {"james":"James Ward","arthur":"Arthur Allshire"} \
                                      }') #this will send a request to the server and see what has changed. also update the variables that the graph etc. uess
         #self.qr.update(dt)
@@ -51,15 +53,17 @@ class TotalTimeGraph(Graph):
         #initalize the graph object
         self.xlabel="Time"
         self.ylabel="Cumulative Seconds Clocked Up"
-        self.x_ticks_major = 1
+        self.x_ticks_major = 5
         self.y_ticks_major = 1000
         self.x_grid_label = True
         self.y_grid_label = True
-        self.PADDING = 5
+        self.PADDING = 10
         self.x_grid = True
         self.y_grid = True
-        self.x_min = -15
-        self.x_max = 0
+        self.xmax = 0
+        self.xmin = -15
+        self.ymin = 0
+        self.ymax = 3000
 
         self.plot = LinePlot(color=[1, 0, 0, 1])
         self.update(0.0)
@@ -68,8 +72,12 @@ class TotalTimeGraph(Graph):
 
     def update(self, dt):
         history, gradient = self.tt.get_total_time_and_history()
-        #self.plot.points = ([history[:]+[[int(time.time()), (int(time.time()-history[-1][1])*gradient)]]])
-        self.plot.points = (history[:]+[[int(time.time()), (int(time.time()-history[-1][1])*gradient)]])
+        points = (history[:]+[[int(time.time()), ((int(time.time()-history[-1][0]))*gradient+history[-1][1])]])
+        current_time = int(time.time())
+        for i in range(len(points)):
+            points[i][0] = (current_time - points[i][0])
+        self.plot.points = points
+        self.plot.points = [(-15, 1000), (-10, 2000), (0, 2500)]
         print self.plot.points
         TotalTimeGraph.add_plot(self, self.plot)
         super(TotalTimeGraph, self)._redraw_all()
